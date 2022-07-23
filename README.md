@@ -3,7 +3,7 @@
 NAME
 ====
 
-HTML::Entity::Fast - Encode / Decode HTML entities
+HTML::Entity::Fast - Encode / Decode HTML entities faster
 
 SYNOPSIS
 ========
@@ -11,8 +11,8 @@ SYNOPSIS
 ```raku
 use HTML::Entity::Fast;
 
-say encode-html-entities '<ent> & ©';  # &LT;ent&GT; &AMP; &COPY;
-say decode-html-entities '&LT;ent&GT; &AMP; &COPY;'  # <ent> & ©
+say encode-html-entities '<ent> & ©';  # &lt;ent&gt; &amp; &copy;
+say decode-html-entities '&lt;ent&gt; &amp; &copy;'  # <ent> & ©
 ```
 
 DESCRIPTION

@@ -584,26 +584,26 @@ my $encode := nqp::getattr(%encode,Map,'$!storage');
 
 my sub encode-html-entities(str $source) is export {
     my int $i     = -1;
+    my int $from;
     my int $chars = nqp::chars($source);
-    my $parts    := nqp::list_s;
-    my int $unchanged;
+
+    my $parts := nqp::list_s;
+    my $entity;
 
     nqp::while(
       nqp::islt_i(++$i,$chars),
-      nqp::push_s(
-        $parts,
-        nqp::ifnull(
-          nqp::atkey($encode,nqp::ordat($source,$i)),
-          nqp::stmts(
-            ++$unchanged,
-            nqp::substr($source,$i,1)
-          )
+      nqp::unless(
+        nqp::isnull($entity := nqp::atkey($encode,nqp::ordat($source,$i))),
+        nqp::stmts(
+          nqp::push_s($parts,nqp::substr($source,$from,$i - $from)),
+          nqp::push_s($parts,$entity),
+          ($from = $i + 1)
         )
       )
     );
-    $unchanged == $chars
-      ?? $source
-      !! nqp::join('',$parts)
+    nqp::elems($parts)
+      ?? nqp::join('',$parts) ~ nqp::substr($source,$from)
+      !! $source
 }
 
 my sub decode-html-entities(str $source) is export {
@@ -646,7 +646,7 @@ my sub decode-html-entities(str $source) is export {
 
 =head1 NAME
 
-HTML::Entity::Fast - Encode / Decode HTML entities
+HTML::Entity::Fast - Encode / Decode HTML entities faster
 
 =head1 SYNOPSIS
 
@@ -654,8 +654,8 @@ HTML::Entity::Fast - Encode / Decode HTML entities
 
 use HTML::Entity::Fast;
 
-say encode-html-entities '<ent> & ©';  # &LT;ent&GT; &AMP; &COPY;
-say decode-html-entities '&LT;ent&GT; &AMP; &COPY;'  # <ent> & ©
+say encode-html-entities '<ent> & ©';  # &lt;ent&gt; &amp; &copy;
+say decode-html-entities '&lt;ent&gt; &amp; &copy;'  # <ent> & ©
 
 =end code
 

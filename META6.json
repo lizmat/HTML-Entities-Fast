@@ -7,7 +7,7 @@
   ],
   "depends": [
   ],
-  "description": "Encode / Decode HTML entities",
+  "description": "Encode / Decode HTML entities faster",
   "license": "Artistic-2.0",
   "name": "HTML::Entity::Fast",
   "perl": "6.d",
@@ -18,8 +18,12 @@
   ],
   "source-url": "https://github.com/lizmat/HTML-Entities-Fast.git",
   "tags": [
+    "HTML",
+    "ENTITY",
+    "ENCODE",
+    "DECODE"
   ],
   "test-depends": [
   ],
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
