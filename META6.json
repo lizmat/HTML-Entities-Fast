@@ -1,0 +1,25 @@
+{
+  "auth": "zef:lizmat",
+  "authors": [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "Encode / Decode HTML entities",
+  "license": "Artistic-2.0",
+  "name": "HTML::Entity::Fast",
+  "perl": "6.d",
+  "provides": {
+    "HTML::Entity::Fast": "lib/HTML/Entity/Fast.rakumod"
+  },
+  "resources": [
+  ],
+  "source-url": "",
+  "tags": [
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}
