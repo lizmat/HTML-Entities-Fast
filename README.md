@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/lizmat/HTML-Entities-Fast/actions/workflows/test.yml/badge.svg)](https://github.com/lizmat/HTML-Entities-Fast/actions)
+
 NAME
 ====
 
