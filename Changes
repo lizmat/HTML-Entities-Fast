@@ -1,6 +1,8 @@
 Revision history for HTML-Entity-Fast
 
 {{$NEXT}}
+
+0.0.3  2024-07-09T21:05:56+02:00
     - Add whitelist-in-encode and whitelist-in-decode subs
     - Add support for custom lookup maps
     - Add separate badges for each OS
