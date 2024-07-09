@@ -582,7 +582,15 @@ use nqp;
 my $decode := nqp::getattr(%decode,Map,'$!storage');
 my $encode := nqp::getattr(%encode,Map,'$!storage');
 
-my sub encode-html-entities(str $source) is export {
+my sub whitelist-in-encode(*@whitelist) is export {
+    my $whitelisted := nqp::clone($encode);
+    nqp::deletekey($whitelisted, nqp::ord($_)) for @whitelist;
+    $whitelisted
+}
+
+my sub encode-html-entities(str $source, $Lookup = $encode) is export {
+    my $lookup := nqp::decont($Lookup);
+
     my int $i     = -1;
     my int $from;
     my int $chars = nqp::chars($source);
@@ -593,7 +601,7 @@ my sub encode-html-entities(str $source) is export {
     nqp::while(
       nqp::islt_i(++$i,$chars),
       nqp::unless(
-        nqp::isnull($entity := nqp::atkey($encode,nqp::ordat($source,$i))),
+        nqp::isnull($entity := nqp::atkey($lookup,nqp::ordat($source,$i))),
         nqp::stmts(
           nqp::push_s($parts,nqp::substr($source,$from,$i - $from)),
           nqp::push_s($parts,$entity),
@@ -606,9 +614,16 @@ my sub encode-html-entities(str $source) is export {
       !! $source
 }
 
-my sub decode-html-entities(str $source) is export {
-    my int $chars = nqp::chars($source);
+my sub whitelist-in-decode(*@whitelist) is export {
+    my $whitelisted := nqp::clone($decode);
+    nqp::deletekey($whitelisted, nqp::lc($_)) for @whitelist;
+    $whitelisted
+}
 
+my sub decode-html-entities(str $source, $Lookup = $decode) is export {
+    my $lookup := nqp::decont($Lookup);
+
+    my int $chars = nqp::chars($source);
     my int $from;
     my int $start;
     my int $end;
@@ -622,7 +637,7 @@ my sub decode-html-entities(str $source) is export {
         ($from = $start + 1),
         nqp::if(
           nqp::isnull($ord := nqp::atkey(
-            $decode,nqp::lc(nqp::substr($source,$start,$end - $start + 1))
+            $lookup,nqp::lc(nqp::substr($source,$start,$end - $start + 1))
           )),
           nqp::stmts(  # meh, unknown entity
             nqp::push_s($parts,nqp::substr($source,$from,$start - $from + 1)),
@@ -654,15 +669,81 @@ HTML::Entity::Fast - Encode / Decode HTML entities faster
 
 use HTML::Entity::Fast;
 
-say encode-html-entities '<ent> & ©';  # &lt;ent&gt; &amp; &copy;
-say decode-html-entities '&lt;ent&gt; &amp; &copy;'  # <ent> & ©
+say encode-html-entities '<ent> & ©';                 # &lt;ent&gt; &amp; &copy;
+say decode-html-entities '&lt;ent&gt; &amp; &copy;';  # <ent> & ©
+
+my $w-encode = whitelist-in-encode("<",">");
+say encode-html-entities '<ent> & ©', $w-encode;                 # <ent> &amp; &copy;
+
+my $w-decode = whitelist-in-decode('&amp;');
+say decode-html-entities '&lt;ent&gt; &amp; &copy;', $w-decode;  # <ent> &amp; ©
 
 =end code
 
 =head1 DESCRIPTION
 
-HTML::Entity::Fast provides two subroutines, one for encoding HTML
-entities in a string, and one for decoding them.
+HTML::Entity::Fast provides subroutines for encoding and decoding HTML
+entities in a string.
+
+=head1 SUBROUTINES
+
+=head2 encode-html-entities
+
+=begin code :lang<raku>
+
+say encode-html-entities '<ent> & ©';             # &lt;ent&gt; &amp; &copy;
+
+my $w-encode = whitelist-in-encode("<",">");
+say encode-html-entities '<ent> & ©', $w-encode;  # <ent> &amp; &copy;
+
+=end code
+
+Encode any special characters in a given string to their HTML entity
+counterpart.  Optionally takes a second argument indicating the exact
+mapping to be used (which is usually the result of a call to the
+C<whitelist-in-encode> subroutine).
+
+=head2 decode-html-entities
+
+=begin code :lang<raku>
+
+say decode-html-entities '&lt;ent&gt; &amp; &copy;';  # <ent> & ©
+
+my $w-decode = whitelist-in-decode('&amp;');
+say decode-html-entities '&lt;ent&gt; &amp; &copy;', $w-decode;  # <ent> &amp; ©
+
+=end code
+
+Decode any HTML entities in a given string to their Unicode counterpart.
+Optionally takes a second argument indicatig the exact mapping to be used
+(which is usually the result of a call to the C<whitelist-in-decode>
+subroutine).
+
+=head2 whitelist-in-encode
+
+=begin code :lang<raku>
+
+my $w-encode = whitelist-in-encode("<",">");
+
+=end code
+
+The C<whitelist-in-encode> subroutine takes any number of arguments,
+each indicating a character that should B<not> be converted by the
+C<encode-html-entities> subroutine.  It returns a lookup map that can
+be specified as the second positional argument to C<encode-html-entities>.
+
+=head2 whitelist-in-decode
+
+=begin code :lang<raku>
+
+my $w-decode = whitelist-in-decode('&amp;');
+
+=end code
+
+The C<whitelist-in-decode> subroutine takes any number of arguments,
+each indicating a HTML entity that should B<not> be converted by the
+C<decode-html-entities> subroutine. It returns a lookup map that can
+be specified as the second positional argument to C<decode-html-entities>.
 
 =head1 AUTHOR
 
@@ -677,7 +758,7 @@ deal to me!
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2022 Elizabeth Mattijsen
+Copyright 2022, 2024 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
