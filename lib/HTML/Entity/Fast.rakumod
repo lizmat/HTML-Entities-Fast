@@ -630,6 +630,18 @@ my sub decode-html-entities(str $source, $Lookup = $decode) is export {
     my     $ord;
     my $parts := nqp::list_s;
 
+    # Handle numerical entities
+    sub numerical() {
+        nqp::push_s($parts,nqp::substr($source,$from,$start - $from));
+
+        my $radix := nqp::eqatic($source,'x',$start + 2)
+          ?? nqp::radix(16,$source,$start + 3,0)
+          !! nqp::radix(10,$source,$start + 2,0);
+
+        nqp::push_s($parts, nqp::chr(nqp::atpos($radix,0)));
+        $from = $end + 1;
+    }
+
     nqp::until(
       nqp::iseq_i(($start = nqp::index($source,'&',$from)),-1),
       nqp::if(
@@ -641,14 +653,7 @@ my sub decode-html-entities(str $source, $Lookup = $decode) is export {
           )),
           nqp::if(       # meh, unknown entity
             nqp::eqat($source,'#',$start + 1),
-            nqp::stmts(  # looks like a numerical
-              nqp::push_s($parts,nqp::substr($source,$from,$start - $from)),
-              nqp::push_s(
-                $parts,
-                nqp::chr(nqp::atpos(nqp::radix(10,$source,$start + 2,0),0))
-              ),
-              ($from = $end + 1)
-            ),
+            numerical(), # looks like a numerical
             nqp::stmts(  # still unknown
               nqp::push_s($parts,nqp::substr($source,$from,$start - $from + 1)),
               ($from = $start + 1)

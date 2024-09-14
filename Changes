@@ -1,7 +1,7 @@
 Revision history for HTML-Entity-Fast
 
 {{$NEXT}}
-    - Add support for numerical HTML entities such as &#060;
+    - Add support for numerical HTML entities such as &#060; and &#X3C;
     - Show separate badges for each OS
 
 0.0.3  2024-07-09T21:05:56+02:00

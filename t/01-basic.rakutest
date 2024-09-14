@@ -1,7 +1,7 @@
 use Test;
 use HTML::Entity::Fast;
 
-plan 7;
+plan 8;
 
 my $with         = 'Text with <entities> & «more» © fo';
 my $without      = 'Text without entities';
@@ -14,14 +14,16 @@ is decode-html-entities($encoded-with), $with, 'decoding with entities';
 is decode-html-entities($without),   $without, 'decoding without entities';
 
 is decode-html-entities('&#060;foo&#062;bar'), '<foo>bar',
-  'decoding numerical entities';
+  'decoding decimal numerical entities';
+is decode-html-entities('&#x3C;bar&#X3e;foo'), '<bar>foo',
+  'decoding hexadecimal numerical entities';
 
 my $w-encode = whitelist-in-encode("<",">");
 my $w-decode = whitelist-in-decode('&amp;');
 
 is encode-html-entities('<ent> & ©', $w-encode),
-  '<ent> &amp; &copy;';
+  '<ent> &amp; &copy;', 'encode with white-listed';
 is decode-html-entities('&lt;ent&gt; &amp; &copy;', $w-decode),
-  '<ent> &amp; ©';
+  '<ent> &amp; ©', 'decode with white-listed';
 
 # vim: expandtab shiftwidth=4
