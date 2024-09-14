@@ -639,11 +639,22 @@ my sub decode-html-entities(str $source, $Lookup = $decode) is export {
           nqp::isnull($ord := nqp::atkey(
             $lookup,nqp::lc(nqp::substr($source,$start,$end - $start + 1))
           )),
-          nqp::stmts(  # meh, unknown entity
-            nqp::push_s($parts,nqp::substr($source,$from,$start - $from + 1)),
-            ($from = $start + 1)
+          nqp::if(       # meh, unknown entity
+            nqp::eqat($source,'#',$start + 1),
+            nqp::stmts(  # looks like a numerical
+              nqp::push_s($parts,nqp::substr($source,$from,$start - $from)),
+              nqp::push_s(
+                $parts,
+                nqp::chr(nqp::atpos(nqp::radix(10,$source,$start + 2,0),0))
+              ),
+              ($from = $end + 1)
+            ),
+            nqp::stmts(  # still unknown
+              nqp::push_s($parts,nqp::substr($source,$from,$start - $from + 1)),
+              ($from = $start + 1)
+            )
           ),
-          nqp::stmts(
+          nqp::stmts(    # known entity
             nqp::push_s($parts,nqp::substr($source,$from,$start - $from)),
             nqp::push_s($parts,nqp::chr($ord)),
             ($from = $end + 1)

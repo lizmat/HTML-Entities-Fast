@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/lizmat/HTML-Entities-Fast/actions/workflows/test.yml/badge.svg)](https://github.com/lizmat/HTML-Entities-Fast/actions)
+[![Actions Status](https://github.com/lizmat/HTML-Entities-Fast/actions/workflows/linux.yml/badge.svg)](https://github.com/lizmat/HTML-Entities-Fast/actions) [![Actions Status](https://github.com/lizmat/HTML-Entities-Fast/actions/workflows/macos.yml/badge.svg)](https://github.com/lizmat/HTML-Entities-Fast/actions) [![Actions Status](https://github.com/lizmat/HTML-Entities-Fast/actions/workflows/windows.yml/badge.svg)](https://github.com/lizmat/HTML-Entities-Fast/actions)
 
 NAME
 ====
