@@ -3,9 +3,9 @@ use HTML::Entity::Fast;
 
 plan 8;
 
-my $with         = 'Text with <entities> & «more» © fo';
+my $with         = 'Text with <entities> & «more» © fo =⃥';
 my $without      = 'Text without entities';
-my $encoded-with = 'Text with &lt;entities&gt; &amp; &laquo;more&raquo; &copy; fo';
+my $encoded-with = 'Text with &lt;entities&gt; &amp; &laquo;more&raquo; &copy; fo &bne;';
 
 is encode-html-entities($with), $encoded-with, 'encoding with entities';
 is encode-html-entities($without),   $without, 'encoding without entities';

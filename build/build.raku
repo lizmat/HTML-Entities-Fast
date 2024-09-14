@@ -28,7 +28,7 @@ for %rules.keys.sort.reverse -> str $key {
     next if %blacklist{$key} || !$key.match(/^'&' \w+ ';'$/);
 
     @out.push: "'$key', ";
-    @out.push: %rules{$key}<characters>.ord ~ ',';
+    @out.push: %rules{$key}<codepoints>.chrs.raku ~ ',';
 }
 
 my $old := $module.slurp;
@@ -59,7 +59,7 @@ while @lines {
     while @out {
         my str $next = @out.shift;
         if $out.chars + $next.chars > 75 {
-            say $out;
+            say $out.trim-trailing;
             $out = "  $next";
         }
         else {
@@ -67,7 +67,7 @@ while @lines {
         }
     }
     say $out.chars > 2
-      ?? "$out.chop(2);"
+      ?? "$out.chop();"
       !! ';';
 
     # we're done
