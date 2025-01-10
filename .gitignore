@@ -1,3 +1,4 @@
 .precomp/
 /HTML-Entity-Fast-*
 /releases/
+*.rakucov

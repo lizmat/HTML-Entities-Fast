@@ -1,0 +1,108 @@
+=begin pod
+
+=head1 NAME
+
+HTML::Entity::Fast - Encode / Decode HTML entities faster
+
+=head1 SYNOPSIS
+
+=begin code :lang<raku>
+
+use HTML::Entity::Fast;
+
+say encode-html-entities '<ent> & ©';                 # &lt;ent&gt; &amp; &copy;
+say decode-html-entities '&lt;ent&gt; &amp; &copy;';  # <ent> & ©
+
+my $w-encode = whitelist-in-encode("<",">");
+say encode-html-entities '<ent> & ©', $w-encode;                 # <ent> &amp; &copy;
+
+my $w-decode = whitelist-in-decode('&amp;');
+say decode-html-entities '&lt;ent&gt; &amp; &copy;', $w-decode;  # <ent> &amp; ©
+
+=end code
+
+=head1 DESCRIPTION
+
+HTML::Entity::Fast provides subroutines for encoding and decoding HTML
+entities in a string.
+
+=head1 SUBROUTINES
+
+=head2 encode-html-entities
+
+=begin code :lang<raku>
+
+say encode-html-entities '<ent> & ©';             # &lt;ent&gt; &amp; &copy;
+
+my $w-encode = whitelist-in-encode("<",">");
+say encode-html-entities '<ent> & ©', $w-encode;  # <ent> &amp; &copy;
+
+=end code
+
+Encode any special characters in a given string to their HTML entity
+counterpart.  Optionally takes a second argument indicating the exact
+mapping to be used (which is usually the result of a call to the
+C<whitelist-in-encode> subroutine).
+
+=head2 decode-html-entities
+
+=begin code :lang<raku>
+
+say decode-html-entities '&lt;ent&gt; &amp; &copy;';  # <ent> & ©
+
+my $w-decode = whitelist-in-decode('&amp;');
+say decode-html-entities '&lt;ent&gt; &amp; &copy;', $w-decode;  # <ent> &amp; ©
+
+=end code
+
+Decode any HTML entities in a given string to their Unicode counterpart.
+Optionally takes a second argument indicatig the exact mapping to be used
+(which is usually the result of a call to the C<whitelist-in-decode>
+subroutine).
+
+=head2 whitelist-in-encode
+
+=begin code :lang<raku>
+
+my $w-encode = whitelist-in-encode("<",">");
+
+=end code
+
+The C<whitelist-in-encode> subroutine takes any number of arguments,
+each indicating a character that should B<not> be converted by the
+C<encode-html-entities> subroutine.  It returns a lookup map that can
+be specified as the second positional argument to C<encode-html-entities>.
+
+=head2 whitelist-in-decode
+
+=begin code :lang<raku>
+
+my $w-decode = whitelist-in-decode('&amp;');
+
+=end code
+
+The C<whitelist-in-decode> subroutine takes any number of arguments,
+each indicating a HTML entity that should B<not> be converted by the
+C<decode-html-entities> subroutine. It returns a lookup map that can
+be specified as the second positional argument to C<decode-html-entities>.
+
+=head1 AUTHOR
+
+Elizabeth Mattijsen <liz@raku.rocks>
+
+Source can be located at: https://github.com/lizmat/HTML-Entity-Fast .
+Comments and Pull Requests are welcome.
+
+If you like this module, or what I’m doing more generally, committing to a
+L<small sponsorship|https://github.com/sponsors/lizmat/>  would mean a great
+deal to me!
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2022, 2024, 2025 Elizabeth Mattijsen
+
+This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+
+=end pod
+
+# vim: expandtab shiftwidth=4
